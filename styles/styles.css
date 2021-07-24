@@ -65,3 +65,11 @@
 .PrivateSwitchBase-root-1 {
   padding: 0 !important;
 }
+
+input[type="submit"] {
+  background-color: #b5e245 !important;
+  color: white !important;
+  padding: 15px 40px !important;
+  font-weight: bold;
+  cursor: pointer;
+}

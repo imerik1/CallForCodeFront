@@ -53,7 +53,7 @@ export default function Inicio() {
         style={{ height: "fit-content" }}
         className="min-w-full flex flex-col justify-center items-center py-14"
       >
-        <p className="preto text-md">powered by</p>
+        <p className="preto text-md bold">powered by</p>
         <div className="flex gap-14 justify-center items-center my-2">
           {powereds.map((powered, id) => {
             return (

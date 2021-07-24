@@ -8,6 +8,7 @@ import {
   TextField,
 } from "@material-ui/core";
 
+import { ButtonSubmit } from "../../components/ButtonSubmit";
 import { Header } from "../../components/Header";
 
 export default function Organizacao() {
@@ -15,29 +16,30 @@ export default function Organizacao() {
   const [isCadastrado, setCadastrado] = useState(false);
   const [isOng, setOng] = useState(true);
   const router = useRouter();
-  const handleCnpjInput = (e) => {
+  const handleCnpjInput = async (e) => {
     var value = e.target.value.replace(/\D/g, "");
     if ((isOng && value.length === 11) || (!isOng && value.length === 14)) {
       setLoading(true);
-      setTimeout(() => {
-        setLoading(false);
-        if (!isCadastrado) {
-          const cnpj = CryptoJS.AES.encrypt(
-            e.target.value.replace(/\D/g, ""),
-            process.env.NEXT_PUBLIC_PASSWORD_CRYPTO
-          ).toString();
-          localStorage.setItem("cnpj", cnpj);
-          router.push("organizacao/cadastrar-organizacao");
-        }
-      }, 5000);
+      const res = await fetch(`/api/middleware/${value}`);
+      const data = await res.json();
+      setLoading(false);
+      if (data) {
+        await setCadastrado(true);
+      } else {
+        const cpfCnpj = CryptoJS.AES.encrypt(
+          e.target.value.replace(/\D/g, ""),
+          process.env.NEXT_PUBLIC_PASSWORD_CRYPTO
+        ).toString();
+        localStorage.setItem("documento", cpfCnpj);
+        router.push("organizacao/cadastrar-organizacao");
+      }
     }
   };
-  return (
-    <div className="background">
-      {Header(false)}
+  const Login = () => {
+    return (
       <div
         style={{ maxWidth: "400px", width: "100%" }}
-        className="flex mb-28 flex-col gap-6 flex-1 items-center justify-center self-center justify-self-center"
+        className="flex mb-28 flex-col gap-6 flex-1 justify-center items-center self-center justify-self-center"
       >
         {isCadastrado ? (
           <h1 className="preto text-5xl my-8 font-extrabold">faça seu login</h1>
@@ -65,7 +67,7 @@ export default function Organizacao() {
               )}
             </div>
             <div
-              style={{ minHeight: "40px" }}
+              style={{ maxHeight: "40px" }}
               className="flex items-center gap-2"
             >
               <Checkbox
@@ -81,20 +83,27 @@ export default function Organizacao() {
           </div>
         </div>
         {isCadastrado ? (
-          <div className="flex justify-between items-center gap-4 w-full">
+          <>
             <TextField
-              className="flex-1"
+              className="w-full"
               variant="filled"
               id="senha"
               type="password"
               label="Senha"
               placeholder="Digite sua senha"
             />
-          </div>
+            {ButtonSubmit("fazer login")}
+          </>
         ) : (
           <></>
         )}
       </div>
+    );
+  };
+  return (
+    <div className="background">
+      {Header(false)}
+      {Login()}
     </div>
   );
 }

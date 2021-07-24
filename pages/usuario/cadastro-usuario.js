@@ -4,6 +4,7 @@ import {
 } from "react";
 
 import CryptoJS from "crypto-js";
+import { useRouter } from "next/router";
 
 import { TextField } from "@material-ui/core";
 
@@ -11,22 +12,23 @@ import { Header } from "../../components/Header";
 
 export default function CadastroUsuario() {
   const [useCpf, setCpf] = useState(false);
+  const router = useRouter();
   useEffect(() => {
-    const cpf = CryptoJS.AES.decrypt(
-      localStorage.getItem("cpf"),
-      process.env.NEXT_PUBLIC_PASSWORD_CRYPTO
-    ).toString(CryptoJS.enc.Utf8);
-    setCpf(cpf);
-    localStorage.removeItem("cpf");
+    if (!localStorage.getItem("cpf")) {
+      router.push("/");
+    } else {
+      const cpf = CryptoJS.AES.decrypt(
+        localStorage.getItem("cpf"),
+        process.env.NEXT_PUBLIC_PASSWORD_CRYPTO
+      ).toString(CryptoJS.enc.Utf8);
+      setCpf(cpf);
+      localStorage.removeItem("cpf");
+    }
   }, []);
-  return (
-    <div className="background">
-      {Header(false)}
-      <div
-        style={{ maxWidth: "800px", width: "100%" }}
-        className="flex mb-28 flex-col gap-6 flex-1 items-center justify-center self-center justify-self-center"
-      >
-        <h1 className="preto text-5xl my-8 font-extrabold">
+  const cadastroUsuario = () => {
+    return (
+      <>
+        <h1 className="preto text-4xl my-8 font-extrabold">
           faça seu cadastro
         </h1>
         <div className="flex justify-between gap-4 w-full">
@@ -79,6 +81,17 @@ export default function CadastroUsuario() {
             type="password"
           />
         </div>
+      </>
+    );
+  };
+  return (
+    <div className="background">
+      {Header(false)}
+      <div
+        style={{ maxWidth: "800px", width: "100%" }}
+        className="flex mb-28 flex-col gap-6 flex-1 items-center justify-center self-center justify-self-center"
+      >
+        {cadastroUsuario()}
       </div>
     </div>
   );
