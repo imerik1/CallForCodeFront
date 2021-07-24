@@ -1,0 +1,67 @@
+* {
+  font-family: "Roboto", sans-serif !important;
+  line-height: 105px;
+}
+
+#__next {
+  width: 100%;
+  max-width: 100vw;
+  height: 100%;
+}
+
+.verde-text {
+  color: #b5e245;
+}
+
+.verde-background {
+  background-color: #b5e245;
+}
+
+.preto {
+  color: #363636;
+}
+
+.branco {
+  color: white;
+}
+
+.background {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  background: linear-gradient(
+    180deg,
+    #ffffff 19.32%,
+    rgba(199, 199, 199, 0.41) 100%
+  );
+  min-height: 100vh;
+  width: 100vw;
+  max-width: 100vw;
+  overflow: hidden;
+}
+
+.logo_powered {
+  filter: saturate(0%);
+  transition: all cubic-bezier(0.075, 0.82, 0.165, 1);
+  transition-duration: 2s;
+}
+
+.logo_powered:hover {
+  filter: saturate(100%);
+}
+
+.MuiFilledInput-underline:after {
+  border-bottom: 2px solid #b5e245 !important;
+}
+
+.MuiInputLabel-filled.MuiInputLabel-shrink {
+  color: #363636 !important;
+}
+
+#loading {
+  height: 60px !important;
+}
+
+.PrivateSwitchBase-root-1 {
+  padding: 0 !important;
+}
