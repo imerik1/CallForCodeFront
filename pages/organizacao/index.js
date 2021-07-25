@@ -92,7 +92,7 @@ export default function Organizacao() {
               label="Senha"
               placeholder="Digite sua senha"
             />
-            {ButtonSubmit("fazer login")}
+            {<ButtonSubmit text="fazer login" id="submit_usuario" />}
           </>
         ) : (
           <></>
