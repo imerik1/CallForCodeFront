@@ -73,3 +73,23 @@ input[type="submit"] {
   font-weight: bold;
   cursor: pointer;
 }
+
+input[type="submit"]:hover {
+  background-color: #bfde70 !important;
+}
+
+.log-out input[type="submit"] {
+  background-color: transparent !important;
+  color: #b5e245 !important;
+  padding: 15px 40px !important;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.log-out input[type="submit"]:hover {
+  background-color: #bfde70 !important;
+}
+
+.log-out div {
+  background-color: transparent !important;
+}
