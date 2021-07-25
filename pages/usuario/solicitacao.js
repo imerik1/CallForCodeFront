@@ -138,6 +138,13 @@ export default function Solicitacao() {
               label="Digite o bairro que a rua está localizada"
               placeholder="Digite o bairro..."
             />
+            <TextField
+              className="w-full"
+              variant="filled"
+              id="numero"
+              label="Digite o número de uma propriedade próxima a você"
+              placeholder="Digite o número..."
+            />
             <h1 className="preto text-3xl my-4 font-extrabold">Ou</h1>
             {useError ? (
               <h2 className="preto text-1xl my-2 font-extrabold">{useError}</h2>

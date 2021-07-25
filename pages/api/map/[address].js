@@ -1,7 +1,7 @@
 export default function handler(req, res) {
   const { address } = req.query;
   fetch(
-    `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${process.env.GOOGLE_MAPS_API_KEY}`,
+    `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`,
     { method: "GET" }
   ).then((response) => {
     response
