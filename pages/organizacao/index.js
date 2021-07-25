@@ -8,7 +8,6 @@ import {
   TextField,
 } from "@material-ui/core";
 
-import { ButtonSubmit } from "../../components/ButtonSubmit";
 import { Header } from "../../components/Header";
 
 export default function Organizacao() {
@@ -92,7 +91,13 @@ export default function Organizacao() {
               label="Senha"
               placeholder="Digite sua senha"
             />
-            {<ButtonSubmit text="fazer login" id="submit_usuario" />}
+            <TextField
+              className="w-min"
+              variant="filled"
+              id="submit_organizacao"
+              type="submit"
+              value="fazer login"
+            />
           </>
         ) : (
           <></>

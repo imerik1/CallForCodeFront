@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 
 import { TextField } from "@material-ui/core";
 
-import { ButtonSubmit } from "../../components/ButtonSubmit";
 import { Header } from "../../components/Header";
 
 export default function Usuario() {
@@ -73,7 +72,13 @@ export default function Usuario() {
                 label="Senha"
                 placeholder="Digite sua senha"
               />
-              {<ButtonSubmit text="fazer login" id="submit_usuario" />}
+              <TextField
+                className="w-min"
+                variant="filled"
+                id="submit_usuario"
+                type="submit"
+                value="fazer login"
+              />
             </>
           ) : (
             <></>
