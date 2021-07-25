@@ -15,14 +15,14 @@ export default function CadastroUsuario() {
   const router = useRouter();
   useEffect(() => {
     if (!localStorage.getItem("cpf")) {
-      router.push("/");
+      //router.push("/");
     } else {
       const cpf = CryptoJS.AES.decrypt(
         localStorage.getItem("cpf"),
         process.env.NEXT_PUBLIC_PASSWORD_CRYPTO
       ).toString(CryptoJS.enc.Utf8);
       setCpf(cpf);
-      localStorage.removeItem("cpf");
+      //localStorage.removeItem("cpf");
     }
   }, []);
   const cadastroUsuario = () => {
