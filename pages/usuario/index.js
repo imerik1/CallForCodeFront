@@ -73,7 +73,7 @@ export default function Usuario() {
                 label="Senha"
                 placeholder="Digite sua senha"
               />
-              {ButtonSubmit("fazer login")}
+              {<ButtonSubmit text="fazer login" id="submit_usuario" />}
             </>
           ) : (
             <></>
