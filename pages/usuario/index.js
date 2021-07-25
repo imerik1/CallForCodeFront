@@ -10,24 +10,51 @@ import { Header } from "../../components/Header";
 export default function Usuario() {
   const [isLoading, setLoading] = useState(false);
   const [isCadastrado, setCadastrado] = useState(false);
+  const [useUser, setUser] = useState([]);
+  const [useErro, setErro] = useState();
   const router = useRouter();
   const handleCpfInput = async (e) => {
     var value = e.target.value.replace(/\D/g, "");
     if (value.length === 11) {
-      await setLoading(true);
-      const res = await fetch(`/api/middleware/${value}`);
+      setLoading(true);
+      const res = await fetch(
+        `https://ecoshared-api.herokuapp.com/donators/cpf/${value}`
+      );
       const data = await res.json();
-      await setLoading(false);
-      if (data) {
+      setLoading(false);
+      if (!data.status) {
+        const senha = CryptoJS.AES.decrypt(
+          data.senha,
+          process.env.NEXT_PUBLIC_PASSWORD_CRYPTO
+        ).toString(CryptoJS.enc.Utf8);
+        data.senha = senha;
+        await useUser.push(data);
         await setCadastrado(true);
       } else {
         const cpf = CryptoJS.AES.encrypt(
-          e.target.value.replace(/\D/g, ""),
+          value,
           process.env.NEXT_PUBLIC_PASSWORD_CRYPTO
         ).toString();
-        localStorage.setItem("cpf", cpf);
-        router.push("usuario/cadastro-usuario");
+        localStorage.setItem("documento", cpf);
+        router.push("usuario/cadastrar-usuario");
       }
+    }
+  };
+  const handleClickLogin = async (e) => {
+    e.preventDefault();
+    const senha = document?.getElementById("senha")?.value;
+    if (useUser[0].senha === senha) {
+      sessionStorage.setItem(
+        "documento",
+        CryptoJS.AES.encrypt(
+          useUser[0].documento,
+          process.env.NEXT_PUBLIC_PASSWORD_CRYPTO
+        ).toString()
+      );
+      sessionStorage.setItem("perfil", "usuario");
+      router.push(`usuario/dashboard`);
+    } else {
+      setErro("Senha incorreta!");
     }
   };
   const dadosPessoais = () => {
@@ -38,9 +65,12 @@ export default function Usuario() {
           className="flex mb-28 flex-col gap-6 flex-1 justify-center items-center self-center justify-self-center"
         >
           {isCadastrado ? (
-            <h1 className="preto text-5xl my-8 font-extrabold">
-              faça seu login
-            </h1>
+            <>
+              <h1 className="preto text-5xl my-4 font-extrabold">
+                faça seu login
+              </h1>
+              <h2 claclassName="preto text-3xl my-2 font-bold">{useErro}</h2>
+            </>
           ) : (
             <h1 className="preto text-5xl my-8 font-extrabold">
               para começar, digite seu CPF
@@ -78,6 +108,7 @@ export default function Usuario() {
                 id="submit_usuario"
                 type="submit"
                 value="fazer login"
+                onClick={(e) => handleClickLogin(e)}
               />
             </>
           ) : (
