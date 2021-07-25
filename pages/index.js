@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 import Image from "next/image";
 import { useRouter } from "next/router";
 
@@ -10,6 +12,18 @@ export default function Inicio() {
     e.preventDefault();
     router.push(`/${encodeURIComponent(uri)}`);
   };
+  useEffect(() => {
+    if (sessionStorage?.getItem("dados") && sessionStorage?.getItem("perfil")) {
+      if (sessionStorage.getItem("perfil") === "organização") {
+        router.push("/organizacao/dashboard");
+      } else {
+        router.push("/usuario/dashboard");
+      }
+    } else {
+      sessionStorage?.removeItem("dados");
+      sessionStorage?.removeItem("perfil");
+    }
+  }, []);
   const Buttons = () => {
     return (
       <>
@@ -21,7 +35,7 @@ export default function Inicio() {
         </button>
         <button
           onClick={(e) => handleClick(e, "organizacao")}
-          className="verde-text text-xl py-2 px-4"
+          className="verde-text text-xl py-1 px-6"
         >
           sou organização
         </button>

@@ -15,35 +15,23 @@ export default function Dashboard() {
   const [useUser, setUser] = useState([]);
   const [isLoading, setLoading] = useState(true);
   useEffect(() => {
-    if (
-      !sessionStorage?.getItem("documento") ||
-      !sessionStorage?.getItem("perfil")
-    ) {
+    if (!sessionStorage?.getItem("perfil")) {
       alert("Você precisa realizar login primeiramente!");
       sessionStorage?.removeItem("perfil");
-      sessionStorage?.removeItem("documento");
       sessionStorage?.removeItem("dados");
       router.push("/");
     } else if (sessionStorage?.getItem("perfil") !== "usuario") {
       alert("Você precisa ser um usuario para acessar essa página!");
       sessionStorage?.removeItem("perfil");
-      sessionStorage?.removeItem("documento");
       sessionStorage?.removeItem("dados");
       router.push("/");
     } else {
-      fetch(
-        `https://ecoshared-api.herokuapp.com/donators/cpf/${CryptoJS.AES.decrypt(
-          sessionStorage.getItem("documento"),
-          process.env.NEXT_PUBLIC_PASSWORD_CRYPTO
-        ).toString(CryptoJS.enc.Utf8)}`,
-        { method: "GET" }
-      )
-        .then((res) => res.json())
-        .then((result) => {
-          sessionStorage.setItem("dados", JSON.stringify(result));
-          useUser.push(result);
-          setLoading(false);
-        });
+      const decripted = CryptoJS.AES.decrypt(
+        sessionStorage.getItem("dados"),
+        process.env.NEXT_PUBLIC_URL_API
+      ).toString(CryptoJS.enc.Utf8);
+      useUser.push(JSON.parse(decripted));
+      setLoading(false);
     }
   }, []);
   const handleClickLogOut = (e) => {
@@ -65,11 +53,14 @@ export default function Dashboard() {
       />
     );
   };
+  const handleClickSolicitacao = (e) => {
+    e.preventDefault();
+    router.push("/usuario/solicitacao");
+  };
   return (
     <>
       {isLoading ? (
         <div className="background">
-          {Header}
           <div
             style={{ maxWidth: "400px", width: "100%" }}
             className="flex mb-28 flex-col gap-6 flex-1 justify-center items-center self-center justify-self-center"
@@ -86,6 +77,14 @@ export default function Dashboard() {
               className="flex mb-28 flex-col gap-6 flex-1 justify-center items-center self-center justify-self-center"
             >
               <h1 className="preto text-3xl my-4 font-extrabold">{`Olá, ${useUser[0].nome}`}</h1>
+              <TextField
+                className="w-min"
+                variant="filled"
+                id="abrir_solicitacao"
+                type="submit"
+                value="abrir solicitação"
+                onClick={(e) => handleClickSolicitacao(e)}
+              />
             </div>
           </div>
         </>

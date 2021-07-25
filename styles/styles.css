@@ -81,12 +81,14 @@ input[type="submit"]:hover {
 .log-out input[type="submit"] {
   background-color: transparent !important;
   color: #b5e245 !important;
-  padding: 15px 40px !important;
   font-weight: bold;
   cursor: pointer;
 }
 
-.log-out input[type="submit"]:hover {
+.log-out input[type="submit"]:hover,
+button:hover {
+  color: white;
+  border-radius: 0.5rem;
   background-color: #bfde70 !important;
 }
 
