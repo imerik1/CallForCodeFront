@@ -72,7 +72,7 @@ export default function Organizacao() {
             <h1 className="preto text-5xl my-4 font-extrabold">
               faça seu login
             </h1>
-            <h2 claclassName="preto text-3xl my-2 font-bold">{useErro}</h2>
+            <h2 className="preto text-3xl my-2 font-bold">{useErro}</h2>
           </>
         ) : (
           <h1 className="preto text-5xl my-8 font-extrabold">

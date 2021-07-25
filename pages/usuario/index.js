@@ -43,14 +43,13 @@ export default function Usuario() {
   const handleClickLogin = async (e) => {
     e.preventDefault();
     const senha = document?.getElementById("senha")?.value;
+    console.log(useUser[0].senha, senha);
     if (useUser[0].senha === senha) {
-      sessionStorage.setItem(
-        "documento",
-        CryptoJS.AES.encrypt(
-          useUser[0].documento,
-          process.env.NEXT_PUBLIC_PASSWORD_CRYPTO
-        ).toString()
-      );
+      const encripted = CryptoJS.AES.encrypt(
+        JSON.stringify(useUser[0]).toString(),
+        process.env.NEXT_PUBLIC_URL_API
+      ).toString();
+      sessionStorage.setItem("dados", encripted);
       sessionStorage.setItem("perfil", "usuario");
       router.push(`usuario/dashboard`);
     } else {
@@ -69,7 +68,7 @@ export default function Usuario() {
               <h1 className="preto text-5xl my-4 font-extrabold">
                 faça seu login
               </h1>
-              <h2 claclassName="preto text-3xl my-2 font-bold">{useErro}</h2>
+              <h2 className="preto text-3xl my-2 font-bold">{useErro}</h2>
             </>
           ) : (
             <h1 className="preto text-5xl my-8 font-extrabold">
