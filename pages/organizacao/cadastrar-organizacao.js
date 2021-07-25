@@ -10,7 +10,12 @@ import validator from "email-validator";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 
-import { TextField } from "@material-ui/core";
+import {
+  List,
+  ListItem,
+  ListItemText,
+  TextField,
+} from "@material-ui/core";
 
 import { Header } from "../../components/Header";
 
@@ -27,8 +32,8 @@ export default function CadastroOrganizacao() {
     e.preventDefault();
     const email = document?.getElementById("email").value;
     const nome = document?.getElementById("nome").value;
-    const password = document?.getElementById("senha").value;
-    const confirmPassword = document?.getElementById("senha_confirmar").value;
+    const senha = document?.getElementById("senha").value;
+    const confirmarSenha = document?.getElementById("senha_confirmar").value;
     const numero = document?.getElementById("numero").value;
     const logradouro = `${useLocate.logradouro} ${useLocate?.complemento}`;
     const complemento = document.getElementById("complemento").value;
@@ -39,14 +44,14 @@ export default function CadastroOrganizacao() {
     const documento = useCpfCnpj;
     const cep = document.getElementById("cep").value;
     var exception = [];
-    if (!password === confirmPassword) {
+    if (!senha === confirmarSenha) {
       exception.push("As senhas devem estar iguais");
     }
     if (!validator.validate(email)) {
       exception.push("O e-mail deve ser válido");
     }
     if (nome.length < 1 || senha.length < 1) {
-      exception.push("Os valores não podem estar vazios, exceto o completo!");
+      exception.push("Os campos não podem estar vazios, exceto o completo!");
     }
     exception.length === 0 ? setException(false) : setException(exception);
     if (exception.length === 0) {
@@ -62,30 +67,34 @@ export default function CadastroOrganizacao() {
           uf: uf,
         },
         documento: documento,
-        email: email,
+        email: CryptoJS.AES.encrypt(
+          email,
+          process.env.NEXT_PUBLIC_PASSWORD_CRYPTO
+        ).toString(),
         isOng: isOng,
         nomeEmpresa: nome,
         senha: CryptoJS.AES.encrypt(
-          password,
+          senha,
           process.env.NEXT_PUBLIC_PASSWORD_CRYPTO
         ).toString(),
       };
-      var header = new Header();
+      var header = new Headers();
       header.append("Content-Type", "application/json");
-      fetch("", {
+      fetch(`https://ecoshared-api.herokuapp.com/collectors`, {
         method: "POST",
         headers: header,
         body: JSON.stringify(body),
-      }).then((res) => {
-        res
-          .json()
-          .then((data) => {
+      })
+        .then((res) => res.json())
+        .then(
+          (result) => {
             alert("Você foi cadastrado com sucesso!");
-          })
-          .then((err) => {
+            router.push("/");
+          },
+          (error) => {
             alert("Ocorreu um erro, tente novamente mais tarde");
-          });
-      });
+          }
+        );
     }
   };
   const handleCepInput = (e) => {
@@ -107,6 +116,14 @@ export default function CadastroOrganizacao() {
         }
       );
     }
+    if (document?.getElementById("numero")?.value) {
+      var e = {
+        target: {
+          value: document?.getElementById("numero")?.value,
+        },
+      };
+      handleNumeroChange(e);
+    }
   };
   const handleNumeroChange = (e) => {
     const value = e.target.value;
@@ -118,7 +135,6 @@ export default function CadastroOrganizacao() {
     fetch(`/api/map/${uri}`, { method: "GET" }).then((res) => {
       res.json().then((data) => {
         setCoord(data);
-        console.log(data);
       });
     });
   };
@@ -147,6 +163,7 @@ export default function CadastroOrganizacao() {
             variant="filled"
             id="nome"
             label="Nome ou razão social"
+            placeholder="Dgite seu nome ou razão social"
           />
           <TextField
             onInput={(e) => handleCepInput(e)}
@@ -154,6 +171,8 @@ export default function CadastroOrganizacao() {
             variant="filled"
             id="cep"
             label="CEP"
+            inputProps={{ maxLength: 8 }}
+            placeholder="Digite seu CEP"
           />
         </div>
         <div className="flex justify-between gap-4 w-full">
@@ -162,6 +181,7 @@ export default function CadastroOrganizacao() {
             variant="filled"
             id="email"
             label="Email para contato"
+            placeholder="Digite seu e-mail"
             type="email"
           />
         </div>
@@ -172,6 +192,7 @@ export default function CadastroOrganizacao() {
             id="senha"
             label="Senha"
             type="password"
+            placeholder="Digite sua senha"
           />
           <TextField
             className="flex-1"
@@ -179,6 +200,7 @@ export default function CadastroOrganizacao() {
             id="senha_confirmar"
             label="Confirmar senha"
             type="password"
+            placeholder="Confirme sua senha"
           />
         </div>
       </>
@@ -257,16 +279,30 @@ export default function CadastroOrganizacao() {
               nome={document.getElementById("nome")?.value}
               zoom={false}
             />
-            {
-              <TextField
-                className="w-min"
-                variant="filled"
-                id="cadastro_organizacao"
-                type="submit"
-                value="fazer cadastro"
-                onClick={(e) => handleClickCadastro(e)}
-              />
-            }
+            <TextField
+              className="w-min"
+              variant="filled"
+              id="cadastro_organizacao"
+              type="submit"
+              value="fazer cadastro"
+              onClick={(e) => handleClickCadastro(e)}
+            />
+            {useException ? (
+              <List>
+                {useException.map((exception, id) => {
+                  return (
+                    <ListItem key={id}>
+                      <ListItemText
+                        id={`list__exception__${id}`}
+                        primary={exception}
+                      />
+                    </ListItem>
+                  );
+                })}
+              </List>
+            ) : (
+              <></>
+            )}
           </>
         ) : (
           <></>
