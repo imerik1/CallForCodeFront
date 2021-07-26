@@ -137,8 +137,7 @@ export default function CadastroOrganizacao() {
       { method: "GET" }
     ).then((res) => {
       res.json().then((data) => {
-        console.log(data);
-        setCoord(data);
+        setCoord(data?.results[0]?.geometry?.location);
       });
     });
   };
