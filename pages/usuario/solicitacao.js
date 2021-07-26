@@ -1,9 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
-import {
-  useEffect,
-  useState,
-} from "react";
+import { useEffect, useState } from "react";
 
 import CryptoJS from "crypto-js";
 import dynamic from "next/dynamic";
@@ -69,7 +66,7 @@ export default function Solicitacao() {
         lng: position?.coords?.longitude,
       };
       const ufs = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=${maps.lat}%20${maps.lng}&key=AIzaSyAj2JutV_tpPTostOIrmuO2vPxJflliu5Q`
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${maps.lat}%20${maps.lng}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
       );
       const uf = await ufs.json();
       const companiesget = await fetch(
