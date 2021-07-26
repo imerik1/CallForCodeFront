@@ -132,7 +132,10 @@ export default function CadastroOrganizacao() {
         useLocate.uf
       } ${useLocate.cep.replace(/\D/g, "")}`
     );
-    fetch(`/api/map/${uri}`, { method: "GET" }).then((res) => {
+    fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?address=${uri}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`,
+      { method: "GET" }
+    ).then((res) => {
       res.json().then((data) => {
         console.log(data);
         setCoord(data);
