@@ -1,0 +1,15 @@
+{
+  "presets": ["next/babel"],
+  "plugins": [
+    [
+      "styled-components",
+      {
+        "namespace": "eco-shared",
+        "ssr": true,
+        "displayName": false,
+        "minify": true,
+        "pure": true
+      }
+    ]
+  ]
+}
