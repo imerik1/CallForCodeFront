@@ -8,7 +8,7 @@ export default function handler(req, res) {
       .json()
       .then((data) => {
         if (data?.results.length === 0) {
-          return res.status(500).json("Erro Interno");
+          return res.status(500).json(data);
         }
         return res.status(200).json(data?.results[0]?.geometry?.location);
       })

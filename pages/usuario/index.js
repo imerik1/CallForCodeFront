@@ -43,7 +43,6 @@ export default function Usuario() {
   const handleClickLogin = async (e) => {
     e.preventDefault();
     const senha = document?.getElementById("senha")?.value;
-    console.log(useUser[0].senha, senha);
     if (useUser[0].senha === senha) {
       const encripted = CryptoJS.AES.encrypt(
         JSON.stringify(useUser[0]).toString(),

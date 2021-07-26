@@ -134,6 +134,7 @@ export default function CadastroOrganizacao() {
     );
     fetch(`/api/map/${uri}`, { method: "GET" }).then((res) => {
       res.json().then((data) => {
+        console.log(data);
         setCoord(data);
       });
     });
