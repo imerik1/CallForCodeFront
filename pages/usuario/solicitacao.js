@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 import {
   useEffect,
@@ -5,6 +6,7 @@ import {
 } from "react";
 
 import CryptoJS from "crypto-js";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 
 import { TextField } from "@material-ui/core";
@@ -16,7 +18,14 @@ export default function Solicitacao() {
   const [isLoading, setLoading] = useState(true);
   const [useLocation, setLocation] = useState([]);
   const [useError, setError] = useState();
+  const [useCoord, setCoord] = useState([]);
+  const [useCompanies, setCompanies] = useState([]);
   const router = useRouter();
+  var company;
+  const MyAwesomeMap = dynamic(
+    () => import("../../components/MapsCompany").then((mod) => mod.Map),
+    { ssr: false }
+  );
   useEffect(() => {
     if (
       !sessionStorage?.getItem("dados") ||
@@ -46,18 +55,33 @@ export default function Solicitacao() {
     sessionStorage?.removeItem("dados");
     router.push("/");
   };
-  const handleClickLocalization = (e) => {
+  const handleClickLocalization = async (e) => {
     e.preventDefault();
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(showPosition, showError, {
         enableHighAccuracy: true,
       });
     }
-    const showPosition = (position) => {
-      useLocation.push(position.coords);
+    async function showPosition(position) {
+      useCoord.length = 0;
+      const maps = {
+        lat: position?.coords?.latitude,
+        lng: position?.coords?.longitude,
+      };
+      const ufs = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${maps.lat}%20${maps.lng}&key=AIzaSyAj2JutV_tpPTostOIrmuO2vPxJflliu5Q`
+      );
+      const uf = await ufs.json();
+      const companiesget = await fetch(
+        `https://ecoshared-api.herokuapp.com/collectors/range?estado=${uf.results[0].address_components[4].short_name}&latitude=${maps.lat}&longitude=${maps.lng}`
+      );
+      const companies = await companiesget.json();
+      useCompanies.length = 0;
+      useCompanies.push(companies);
+      useCoord.push(maps);
       setError(false);
-    };
-    const showError = (error) => {
+    }
+    function showError(error) {
       switch (error.code) {
         case error.PERMISSION_DENIED:
           setError("Você negou a permissão, ative e tente novamente.");
@@ -76,7 +100,56 @@ export default function Solicitacao() {
           setError("Hmm ocorreu um erro, tente novamente mais tarde.");
           break;
       }
-    };
+    }
+  };
+  const handleClickCadastrarSolicitacao = async (e) => {
+    e.preventDefault();
+    if (
+      sessionStorage?.getItem("nome-marker") &&
+      sessionStorage?.getItem("documento-marker")
+    ) {
+      const descricao = document?.getElementById("descricao")?.value;
+      const nome = sessionStorage.getItem("nome-marker");
+      const documento = sessionStorage.getItem("documento-marker");
+      const fetchIdOrg = await fetch(
+        `https://ecoshared-api.herokuapp.com/collectors/document/${documento}`
+      );
+      const dataOrg = await fetchIdOrg.json();
+      const decripted = CryptoJS.AES.decrypt(
+        sessionStorage.getItem("dados"),
+        process.env.NEXT_PUBLIC_URL_API
+      ).toString(CryptoJS.enc.Utf8);
+      const fetchIdUsuario = await fetch(
+        `https://ecoshared-api.herokuapp.com/donators/cpf/${
+          JSON.parse(decripted).cpf
+        }`
+      );
+      const dataUsuario = await fetchIdUsuario.json();
+      const body = {
+        descricao: descricao,
+        idCollector: dataOrg.id,
+        idDonator: dataUsuario.id,
+      };
+      console.log(body);
+      var header = new Headers();
+      header.append("Content-Type", "application/json");
+      fetch("https://ecoshared-api.herokuapp.com/donators/order", {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: header,
+      }).then((response) => {
+        response.json().then((data) => {
+          console.log(data);
+          alert("Solicitação criada com sucesso!");
+          sessionStorage.removeItem("nome-marker");
+          sessionStorage.removeItem("documento-marker");
+          router.push("/usuario/dashboard");
+        }),
+          (erro) => {
+            alert("Não foi possivel realizar a solicitação!");
+          };
+      });
+    }
   };
   const sair = () => {
     return (
@@ -117,35 +190,6 @@ export default function Solicitacao() {
               placeholder="Digite o que gostaria de reciclar..."
               inputProps={{ maxLength: 255 }}
             />
-            <TextField
-              className="w-full"
-              variant="filled"
-              id="rua"
-              label="Onde é o ponto de sáida?"
-              placeholder="Digite a rua..."
-            />
-            <TextField
-              className="w-full"
-              variant="filled"
-              id="cidade"
-              label="Digite a cidade que a rua está localizada"
-              placeholder="Digite a cidade..."
-            />
-            <TextField
-              className="w-full"
-              variant="filled"
-              id="bairro"
-              label="Digite o bairro que a rua está localizada"
-              placeholder="Digite o bairro..."
-            />
-            <TextField
-              className="w-full"
-              variant="filled"
-              id="numero"
-              label="Digite o número de uma propriedade próxima a você"
-              placeholder="Digite o número..."
-            />
-            <h1 className="preto text-3xl my-4 font-extrabold">Ou</h1>
             {useError ? (
               <h2 className="preto text-1xl my-2 font-extrabold">{useError}</h2>
             ) : (
@@ -159,6 +203,26 @@ export default function Solicitacao() {
               value="pegar minha localização"
               onClick={(e) => handleClickLocalization(e)}
             />
+            {useCoord.length > 0 ? (
+              <>
+                <MyAwesomeMap
+                  latitude={useCoord[0].lat}
+                  longitude={useCoord[0].lng}
+                  zoom={false}
+                  companies={useCompanies}
+                />
+                <TextField
+                  className="w-min"
+                  variant="filled"
+                  id="enviar_soliticação"
+                  type="submit"
+                  value="enviar solicitação"
+                  onClick={(e) => handleClickCadastrarSolicitacao(e)}
+                />
+              </>
+            ) : (
+              <></>
+            )}
           </div>
         </div>
       )}
