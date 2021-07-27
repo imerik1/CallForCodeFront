@@ -17,10 +17,19 @@ const GlobalStyle = createGlobalStyle`
     filter: saturate(100%);
   }
   header, main, footer {
-    padding: 1rem 6rem;
+    padding: 1rem 8rem;
+    @media screen and (max-width: 1105px) {
+      padding: 0.8rem 6rem;
+    }
     @media screen and (max-width: 805px) {
       padding: 0.5rem 2rem;
     }
+    @media screen and (max-width: 445px) {
+      padding: 0;
+    }
+  }
+  #loading {
+    height: 60px !important;
   }
   .MuiFilledInput-underline:after {
     border-bottom: 2px solid #b5e245 !important;
