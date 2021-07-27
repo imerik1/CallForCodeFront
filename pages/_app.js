@@ -1,4 +1,3 @@
-import { CookiesProvider } from "react-cookie";
 import { ThemeProvider } from "styled-components";
 
 import GlobalStyle from "../styles/global";
@@ -13,9 +12,7 @@ function MyApp({ Component, pageProps }) {
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />
-      <CookiesProvider>
-        <Component {...pageProps} />
-      </CookiesProvider>
+      <Component {...pageProps} />
     </ThemeProvider>
   );
 }
