@@ -30,11 +30,13 @@ export const Header = styled.header`
 
 export const Main = styled.main`
   flex: 1;
-  max-width: 100vw;
+  width: ${(props) => (props.width ? props.width : "fit-content")};
+  max-width: ${(props) => (props.maxWidth ? props.maxWidth : "100vw")};
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
-  align-items: center;
+  align-self: ${(props) => (props.leftSelf ? "" : "center")};
+  align-items: ${(props) => (props.left ? "" : "center")};
 `;
 
 export const Footer = styled.footer`
@@ -58,7 +60,16 @@ export const Logo = styled.h1`
     font-size: 1.6rem;
     font-weight: normal;
   }
-  @media screen and (max-width: 905px) {
+`;
+
+export const TextMain = styled.h1`
+  color: ${(props) => props.theme.secondary};
+  font-size: 2.5rem;
+  font-weight: bolder;
+  max-width: fit-content;
+  padding: 1rem 0;
+  span {
+    font-size: 1.4rem;
   }
 `;
 
