@@ -1,105 +1,71 @@
 import { useEffect } from "react";
 
-import Image from "next/image";
-import { useRouter } from "next/router";
+import router, { useRouter } from "next/router";
 
-import { Header } from "../components/Header";
+import HeaderComponent from "../components/HeaderComponent";
+import FooterComponent from "../components/index/FooterComponent";
+import {
+  Body,
+  Button,
+  Main,
+  Slogan,
+} from "../styles/styles";
 
-export default function Inicio() {
-  const powereds = ["ibm", "microsoft", "shawee", "fcamara"];
+const Buttons = () => {
   const router = useRouter();
-  const handleClick = (e, uri) => {
-    e.preventDefault();
-    router.push(`/${encodeURIComponent(uri)}`);
-  };
+  return (
+    <>
+      <Button
+        onClick={(e) => {
+          e.preventDefault();
+          router.push("/usuario/login");
+        }}
+        color="third"
+        bgColor="primary"
+      >
+        sou usuário
+      </Button>
+      <Button
+        onClick={(e) => {
+          e.preventDefault();
+          router.push("/organizacao/login");
+        }}
+        color="primary"
+      >
+        sou organização
+      </Button>
+    </>
+  );
+};
+
+export default function Index() {
   useEffect(() => {
     if (sessionStorage?.getItem("dados") && sessionStorage?.getItem("perfil")) {
-      if (sessionStorage.getItem("perfil") === "organização") {
-        router.push("/organizacao/dashboard");
-      } else {
+      if (sessionStorage?.getItem("perfil") === "usuario") {
         router.push("/usuario/dashboard");
+      } else {
+        router.push("/organizacao/dashboard");
       }
     } else {
-      sessionStorage?.removeItem("dados");
-      sessionStorage?.removeItem("perfil");
+      sessionStorage.removeItem("dados");
+      sessionStorage.removeItem("perfil");
     }
   }, []);
-  const Buttons = () => {
-    return (
-      <>
-        <button
-          onClick={(e) => handleClick(e, "usuario")}
-          className="branco text-xl verde-background py-1 px-6 rounded-lg"
-        >
-          sou usuário
-        </button>
-        <button
-          onClick={(e) => handleClick(e, "organizacao")}
-          className="verde-text text-xl py-1 px-6"
-        >
-          sou organização
-        </button>
-      </>
-    );
-  };
-
-  const Main = () => {
-    return (
-      <section className="flex px-24 flex-1 items-center">
-        <div style={{ maxWidth: "426px" }}>
-          <span className="preto text-7xl font-extrabold">
-            o novo jeito de{" "}
-            {
-              <span className="verde-text text-7xl font-extrabold">
-                reciclar
-              </span>
-            }{" "}
-            seus itens
-          </span>
-        </div>
-      </section>
-    );
-  };
-
-  const Footer = () => {
-    return (
-      <footer
-        style={{ height: "fit-content" }}
-        className="min-w-full flex flex-col justify-center items-center py-14"
-      >
-        <p className="preto text-md bold">powered by</p>
-        <div className="flex gap-14 justify-center items-center my-2">
-          {powereds.map((powered, id) => {
-            return (
-              <div
-                key={id}
-                style={{
-                  width: "150px",
-                  maxHeight: "50px",
-                  height: "50px",
-                  position: "relative",
-                }}
-              >
-                <Image
-                  src={`/${powered}.png`}
-                  layout="fill"
-                  objectFit="contain"
-                  alt={powered}
-                  className="logo_powered"
-                />
-              </div>
-            );
-          })}
-        </div>
-      </footer>
-    );
-  };
-
   return (
-    <div className="background">
-      {Header(Buttons)}
-      {Main()}
-      {Footer()}
-    </div>
+    <Body>
+      <HeaderComponent Extend={Buttons()} />
+      <Main left={true} leftSelf={true}>
+        <div style={{ maxWidth: "426px" }}>
+          <Slogan color="secondary" weight="bold">
+            o novo jeito de{" "}
+            <Slogan color="primary" weight="bolder">
+              reciclar{" "}
+            </Slogan>
+            seus itens
+          </Slogan>
+        </div>
+      </Main>
+      <FooterComponent />
+    </Body>
   );
 }
