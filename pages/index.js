@@ -1,4 +1,6 @@
-import { useRouter } from "next/router";
+import { useEffect } from "react";
+
+import router, { useRouter } from "next/router";
 
 import HeaderComponent from "../components/HeaderComponent";
 import FooterComponent from "../components/index/FooterComponent";
@@ -14,14 +16,20 @@ const Buttons = () => {
   return (
     <>
       <Button
-        onClick={(e) => router.push("/usuario/login")}
+        onClick={(e) => {
+          e.preventDefault();
+          router.push("/usuario/login");
+        }}
         color="third"
         bgColor="primary"
       >
         sou usuário
       </Button>
       <Button
-        onClick={(e) => router.push("/organizacao/login")}
+        onClick={(e) => {
+          e.preventDefault();
+          router.push("/organizacao/login");
+        }}
         color="primary"
       >
         sou organização
@@ -31,10 +39,22 @@ const Buttons = () => {
 };
 
 export default function Index() {
+  useEffect(() => {
+    if (sessionStorage?.getItem("dados") && sessionStorage?.getItem("perfil")) {
+      if (sessionStorage?.getItem("perfil") === "usuario") {
+        router.push("/usuario/dashboard");
+      } else {
+        router.push("/organizacao/dashboard");
+      }
+    } else {
+      sessionStorage.removeItem("dados");
+      sessionStorage.removeItem("perfil");
+    }
+  }, []);
   return (
     <Body>
       <HeaderComponent Extend={Buttons()} />
-      <Main>
+      <Main left={true} leftSelf={true}>
         <div style={{ maxWidth: "426px" }}>
           <Slogan color="secondary" weight="bold">
             o novo jeito de{" "}
